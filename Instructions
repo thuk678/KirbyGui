@@ -1,0 +1,161 @@
+================================================================================
+                       BRACKET V3.2 UI LIBRARY - MANUAL
+================================================================================
+
+Bracket V3.2 is a professional-grade Roblox UI library featuring a powerful 
+"Flag" system (for configurations), advanced multi-mode dropdowns, 
+and built-in notification systems.
+
+--------------------------------------------------------------------------------
+1. LOADING THE LIBRARY
+--------------------------------------------------------------------------------
+To use the library, put this at the very top of your script:
+
+local Bracket = loadstring(game:HttpGet("https://raw.githubusercontent.com/thuk678/KirbyGui/refs/heads/main/README.lua"))()
+
+--------------------------------------------------------------------------------
+2. CREATING THE MAIN WINDOW
+--------------------------------------------------------------------------------
+The Window is created instantly. DO NOT use "Window:Initialize()" at the end.
+
+local Window = Bracket:Window({
+    Name = "My Script Hub",
+    Enabled = true,
+    Color = Color3.fromRGB(255, 128, 0), -- Theme accent color
+    Size = UDim2.new(0, 496, 0, 496),
+    Position = UDim2.new(0.5, -248, 0.5, -248)
+})
+
+--------------------------------------------------------------------------------
+3. TABS AND SECTIONS
+--------------------------------------------------------------------------------
+Tabs are buttons at the top. Sections are containers inside tabs.
+
+local MainTab = Window:Tab({Name = "Main Tab"})
+
+-- Side can be "Left", "Right", or nil (auto-choose)
+local MySection = MainTab:Section({Name = "Features", Side = "Left"})
+
+--------------------------------------------------------------------------------
+4. UI ELEMENTS (COMPONENTS)
+--------------------------------------------------------------------------------
+
+[ TOGGLE & KEYBIND ]
+local MyToggle = MySection:Toggle({
+    Name = "Auto Farm",
+    Value = false,
+    Flag = "Farm_Flag", -- Unique ID for saving settings
+    Callback = function(v) print("Status:", v) end
+})
+
+-- Attach a keybind to that toggle
+MyToggle:Keybind({
+    Value = "F", -- Default key
+    Flag = "Farm_Bind"
+})
+
+[ SLIDER ]
+MySection:Slider({
+    Name = "WalkSpeed",
+    Min = 16,
+    Max = 300,
+    Value = 50,
+    Precise = 1, -- Decimal places (0 for whole numbers)
+    Unit = " studs",
+    Flag = "Speed_Flag",
+    Callback = function(v) print("Speed:", v) end
+})
+
+[ DROPDOWN ]
+-- Mode "Button" = Pick one. Mode "Toggle" = Pick multiple.
+MySection:Dropdown({
+    Name = "Teleport Locations",
+    Flag = "TP_Flag",
+    List = {
+        {Name = "Spawn", Mode = "Button", Value = true},
+        {Name = "Shop", Mode = "Button"},
+        {Name = "Arena", Mode = "Button"}
+    }
+})
+
+[ COLORPICKER ]
+MySection:Colorpicker({
+    Name = "ESP Color",
+    Flag = "ESP_Col",
+    Value = {1, 0, 0, 0, false}, -- {Hue, Sat, Val, Alpha, Rainbow}
+    Callback = function(table, color3) end
+})
+
+[ BUTTON & TEXTBOX ]
+MySection:Button({
+    Name = "Reset Player",
+    Callback = function() game.Players.LocalPlayer.Character:BreakJoints() end
+})
+
+MySection:Textbox({
+    Name = "Join Code",
+    Placeholder = "Enter text...",
+    Flag = "Code_Flag",
+    Callback = function(text) print(text) end
+})
+
+--------------------------------------------------------------------------------
+5. ADVANCED FEATURES
+--------------------------------------------------------------------------------
+
+[ AUTOMATIC CONFIG SYSTEM ]
+-- This adds a full UI for users to save/load profiles to their workspace folder
+MainTab:AddConfigSection("MyScriptData", "Right")
+
+[ WATERMARK ]
+Window:Watermark({
+    Title = "Zee Hub | v1.0",
+    Enabled = true,
+    Flag = "UI/Watermark"
+})
+
+[ NOTIFICATIONS ]
+-- Type 1: Detailed box
+Bracket:Notification({
+    Title = "Alert",
+    Description = "Someone is spectating!",
+    Duration = 5
+})
+
+-- Type 2: Sleek bar
+Bracket:Notification2({
+    Title = "Script Loaded",
+    Duration = 3,
+    Color = Color3.fromRGB(0, 255, 150)
+})
+
+--------------------------------------------------------------------------------
+6. UTILITY COMMANDS
+--------------------------------------------------------------------------------
+
+[ HIDE / SHOW UI ]
+To hide or show the menu, you must script it manually:
+game:GetService("UserInputService").InputBegan:Connect(function(i, g)
+    if not g and i.KeyCode == Enum.KeyCode.Insert then -- Change Insert to your key
+        Window:Toggle(not Window.Enabled)
+    end
+end)
+
+[ EXIT / UNLOAD ]
+To completely delete the UI from the screen:
+Bracket.ScreenAsset:Destroy()
+
+--------------------------------------------------------------------------------
+7. TROUBLESHOOTING / FAQ
+--------------------------------------------------------------------------------
+Q: Error: "attempt to call missing method 'Initialize'"?
+A: DELETE the line "Window:Initialize()". Bracket V3.2 does not use it.
+
+Q: The UI doesn't show up?
+A: Ensure your executor is high-quality. If you are in Roblox Studio, make sure 
+   you are using the "Local Asset" method correctly.
+
+Q: How do I read a value without a callback?
+A: Use Window.Flags["FlagName"]. 
+   Example: print(Window.Flags["Speed_Flag"])
+================================================================================
