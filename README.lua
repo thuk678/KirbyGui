@@ -5532,19 +5532,20 @@ end
 
 
 
-local m_thread = task do
-    setreadonly(m_thread, false)
+local m_thread = {}
+-- Copy existing task functions to our new table
+for i, v in pairs(task) do 
+    m_thread[i] = v 
+end
 
-    function m_thread.spawn_loop(p_time, p_callback)
-        m_thread.spawn(function()
-            while true do
-                p_callback()
-                m_thread.wait(p_time)
-            end
-        end)
-    end
-
-    setreadonly(m_thread, true)
+-- Add our custom loop function to our table instead of the global one
+function m_thread.spawn_loop(p_time, p_callback)
+    task.spawn(function()
+        while true do
+            p_callback()
+            task.wait(p_time)
+        end
+    end)
 end
 
 return library, library.pointers, theme -- utility
