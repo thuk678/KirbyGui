@@ -8,7 +8,7 @@ local CoreGui = game:GetService("CoreGui")
 
 local Debug,LocalPlayer = false,PlayerService.LocalPlayer
 local MainAssetFolder = Debug and ReplicatedStorage.BracketV32
-	or InsertService:LoadLocalAsset("rbxassetid://9153139105")
+	or InsertService:LoadLocalAsset("rbxassetid://70385935428520")
 
 	local function GetAsset(AssetPath)
 		AssetPath = AssetPath:split("/")
@@ -496,14 +496,14 @@ local function InitToggle(Parent,ScreenAsset,Window,Toggle)
 
 	ToggleAsset.Parent = Parent
 	ToggleAsset.Title.Text = Toggle.Name
-	ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(40, 30, 50)
+	ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(45, 45, 50)
 
 	table.insert(Window.Colorable,ToggleAsset.Tick)
 	ToggleAsset.MouseButton1Click:Connect(function()
 		Toggle.Value = not Toggle.Value
 		Window.Flags[Toggle.Flag] = Toggle.Value
 		Toggle.Callback(Toggle.Value)
-		ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(40, 30, 50)
+		ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(45, 45, 50)
 	end)
 	ToggleAsset.Title:GetPropertyChangedSignal("TextBounds"):Connect(function()
 		ToggleAsset.Size = UDim2.new(1,0,0,ToggleAsset.Title.TextBounds.Y)
@@ -517,7 +517,7 @@ local function InitToggle(Parent,ScreenAsset,Window,Toggle)
 		Toggle.Value = Boolean
 		Window.Flags[Toggle.Flag] = Toggle.Value
 		Toggle.Callback(Toggle.Value)
-		ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(40, 30, 50)
+		ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(45, 45, 50)
 	end
 	function Toggle:SetCallback(Callback)
 		Toggle.Callback = Callback
@@ -574,7 +574,7 @@ local function InitToggle(Parent,ScreenAsset,Window,Toggle)
 
 					Toggle.Callback(Toggle.Value)
 					Keybind.Callback(Keybind.Value,true)
-					ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(40, 30, 50)
+					ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(45, 45, 50)
 				end
 			end
 			if Keybind.Mouse then
@@ -598,7 +598,7 @@ local function InitToggle(Parent,ScreenAsset,Window,Toggle)
 
 						Toggle.Callback(Toggle.Value)
 						Keybind.Callback(Keybind.Value,true)
-						ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(40, 30, 50)
+						ToggleAsset.Tick.BackgroundColor3 = Toggle.Value and Window.Color or Color3.fromRGB(45, 45, 50)
 					end
 				end
 			end
@@ -912,7 +912,7 @@ local function InitDropdown(Parent,ScreenAsset,Window,Dropdown)
 			for Index, Option in pairs(Dropdown.List) do
 				if Option.Mode == "Button" then
 					if Option.Instance then
-						Option.Instance.BorderColor3 = Color3.fromRGB(40, 30, 50)
+						Option.Instance.BorderColor3 = Color3.fromRGB(45, 45, 50)
 					end
 					Option.Value = false
 				end
@@ -922,7 +922,7 @@ local function InitDropdown(Parent,ScreenAsset,Window,Dropdown)
 			Option.Value = Toggle
 		end
 
-		Option.Instance.BorderColor3 = Option.Value and Window.Color or Color3.fromRGB(40, 30, 50)
+		Option.Instance.BorderColor3 = Option.Value and Window.Color or Color3.fromRGB(45, 45, 50)
 
 		-- Selected Setting
 		for Index, Option in pairs(Dropdown.List) do
@@ -1161,10 +1161,10 @@ local function InitColorpicker(Parent,ScreenAsset,Window,Colorpicker)
 	end
 
 	table.insert(Window.Colorable,PaletteAsset.Rainbow.Tick)
-	PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5] and Window.Color or Color3.fromRGB(40, 30, 50)
+	PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5] and Window.Color or Color3.fromRGB(45, 45, 50)
 	PaletteAsset.Rainbow.MouseButton1Click:Connect(function()
 		Colorpicker.Value[5] = not Colorpicker.Value[5]
-		PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5] and Window.Color or Color3.fromRGB(40, 30, 50)
+		PaletteAsset.Rainbow.Tick.BackgroundColor3 = Colorpicker.Value[5] and Window.Color or Color3.fromRGB(45, 45, 50)
 	end)
 	RunService.Heartbeat:Connect(function()
 		if Colorpicker.Value[5] then
@@ -1206,7 +1206,7 @@ local Bracket = InitScreen()
 function Bracket:Window(Window)
 	Window = GetType(Window,{},"table")
 	Window.Name = GetType(Window.Name,"Window","string")
-	Window.Color = GetType(Window.Color,Color3.new(0.5,0,0.8),"Color3")
+	Window.Color = GetType(Window.Color,Color3.new(0.2,0.3,0.4),"Color3")
 	Window.Size = GetType(Window.Size,UDim2.new(0,496,0,496),"UDim2")
 	Window.Position = GetType(Window.Position,UDim2.new(0.5,-248,0.5,-248),"UDim2")
 	Window.Enabled = GetType(Window.Enabled,true,"boolean")
@@ -1541,7 +1541,7 @@ function Bracket:Notification2(Notification)
 	Notification = GetType(Notification,{},"table")
 	Notification.Title = GetType(Notification.Title,"Title","string")
 	Notification.Duration = GetType(Notification.Duration,5,"number")
-	Notification.Color = GetType(Notification.Color,Color3.new(0.5,0,0.8),"Color3")
+	Notification.Color = GetType(Notification.Color,Color3.new(0.2,0.3,0.4),"Color3")
 
 	local NotificationAsset = GetAsset("Notification/NL")
 	NotificationAsset.Parent = Bracket.ScreenAsset.NLHandle
