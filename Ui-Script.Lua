@@ -13,10 +13,11 @@ local Theme = {
 }
 
 function Library:CreateWindow(Config)
-    local WindowName = Config.Name or "Orochimaru"
+    local WindowName = Config.Name or "Kirby Hub"
     
     -- 1. STARTUP LOADING SCREEN
     local LoadingGui = Instance.new("ScreenGui")
+    LoadingGui.Name = "KirbyLoading"
     LoadingGui.Parent = CoreGui
     
     local LMain = Instance.new("Frame")
@@ -29,18 +30,19 @@ function Library:CreateWindow(Config)
 
     local LText = Instance.new("TextLabel")
     LText.Size = UDim2.new(1, 0, 1, 0)
-    LText.Text = "OROCHIMARU LOADING..."
+    LText.Text = "KIRBY GUI LOADING..."
     LText.Font = Enum.Font.GothamBold
+    LText.TextSize = 20
     LText.TextColor3 = Theme.Dark
     LText.BackgroundTransparency = 1
     LText.Parent = LMain
     
-    task.wait(1.5) -- Simulated Load
+    task.wait(2) -- Simulate loading
     LoadingGui:Destroy()
 
     -- 2. MAIN INTERFACE
     local MainGui = Instance.new("ScreenGui")
-    MainGui.Name = "Orochimaru_Lib"
+    MainGui.Name = "Kirby_Lib"
     MainGui.Parent = CoreGui
 
     local MainFrame = Instance.new("Frame")
@@ -51,7 +53,7 @@ function Library:CreateWindow(Config)
     MainFrame.BorderColor3 = Theme.Black
     MainFrame.Parent = MainGui
 
-    -- Top Bar (Exit Button & Title)
+    -- Top Bar
     local TopBar = Instance.new("Frame")
     TopBar.Size = UDim2.new(1, 0, 0, 45)
     TopBar.BackgroundColor3 = Theme.Accent
@@ -65,23 +67,25 @@ function Library:CreateWindow(Config)
     Title.Position = UDim2.new(0, 10, 0, 0)
     Title.TextColor3 = Theme.Text
     Title.Font = Enum.Font.Inter
-    Title.TextSize = 20
+    Title.TextSize = 18
     Title.BackgroundTransparency = 1
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = TopBar
 
+    -- Exit Button
     local ExitBtn = Instance.new("TextButton")
     ExitBtn.Size = UDim2.new(0, 30, 0, 30)
-    ExitBtn.Position = UDim2.new(1, -35, 0, 7)
+    ExitBtn.Position = UDim2.new(1, -37, 0, 7)
     ExitBtn.BackgroundColor3 = Theme.Dark
     ExitBtn.Text = "X"
     ExitBtn.TextColor3 = Theme.Text
+    ExitBtn.Font = Enum.Font.GothamBold
     ExitBtn.Parent = TopBar
     ExitBtn.MouseButton1Click:Connect(function() MainGui:Destroy() end)
 
-    -- Sidebar for Tabs
+    -- Sidebar (The Sidebar from your Rectangle3)
     local Sidebar = Instance.new("ScrollingFrame")
-    Sidebar.Size = UDim2.new(0, 100, 1, -45)
+    Sidebar.Size = UDim2.new(0, 90, 1, -45)
     Sidebar.Position = UDim2.new(0, 0, 0, 45)
     Sidebar.BackgroundColor3 = Theme.Accent
     Sidebar.BorderSizePixel = 2
@@ -91,22 +95,25 @@ function Library:CreateWindow(Config)
 
     local SideLayout = Instance.new("UIListLayout")
     SideLayout.Parent = Sidebar
-    SideLayout.Padding = UDim.new(0, 5)
+    SideLayout.Padding = UDim.new(0, 2)
+    SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-    -- Container for Buttons
+    -- Main Content Area (Rectangle 6)
     local Container = Instance.new("ScrollingFrame")
-    Container.Size = UDim2.new(1, -110, 1, -55)
-    Container.Position = UDim2.new(0, 105, 0, 50)
+    Container.Size = UDim2.new(1, -100, 1, -55)
+    Container.Position = UDim2.new(0, 95, 0, 50)
     Container.BackgroundColor3 = Theme.Accent
     Container.BorderSizePixel = 2
     Container.BorderColor3 = Theme.Black
+    Container.ScrollBarThickness = 4
     Container.Parent = MainFrame
 
     local ContainerLayout = Instance.new("UIListLayout")
     ContainerLayout.Parent = Container
     ContainerLayout.Padding = UDim.new(0, 5)
+    ContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-    -- Dragging Logic
+    -- Simple Dragging
     local dragging, dragInput, dragStart, startPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -125,31 +132,42 @@ function Library:CreateWindow(Config)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
     end)
 
-    -- TAB AND BUTTON LOGIC
-    local Tabs = {}
-    function Tabs:CreateTab(TabName)
+    -- TAB AND BUTTON CREATION
+    local WindowMethods = {}
+
+    function WindowMethods:CreateTab(TabName)
         local TabBtn = Instance.new("TextButton")
-        TabBtn.Size = UDim2.new(1, 0, 0, 30)
+        TabBtn.Size = UDim2.new(1, -4, 0, 35)
         TabBtn.BackgroundColor3 = Theme.Dark
         TabBtn.Text = TabName
         TabBtn.TextColor3 = Theme.Text
+        TabBtn.Font = Enum.Font.Inter
         TabBtn.Parent = Sidebar
 
-        local Elements = {}
-        function Elements:CreateButton(BtnName, Callback)
+        local TabMethods = {}
+
+        function TabMethods:CreateButton(BtnName, Callback)
             local NewBtn = Instance.new("TextButton")
             NewBtn.Size = UDim2.new(1, -10, 0, 35)
             NewBtn.BackgroundColor3 = Theme.Dark
             NewBtn.Text = BtnName
             NewBtn.TextColor3 = Theme.Text
+            NewBtn.Font = Enum.Font.Inter
             NewBtn.Parent = Container
+            
             NewBtn.MouseButton1Click:Connect(function()
                 Callback()
+                -- Button Click Effect
+                NewBtn.BackgroundColor3 = Color3.new(1,1,1)
+                task.wait(0.1)
+                NewBtn.BackgroundColor3 = Theme.Dark
             end)
         end
-        return Elements
+        
+        return TabMethods
     end
-    return Tabs
+
+    return WindowMethods
 end
 
 return Library
