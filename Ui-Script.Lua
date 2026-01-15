@@ -5,10 +5,10 @@ local CoreGui = game:GetService("CoreGui")
 
 -- Colors from your React Design
 local Theme = {
-    MainBG = Color3.fromHex("#EAE0CF"),    -- StyledRectangle1
-    Accent = Color3.fromHex("#94B4C1"),    -- StyledRectangle2
-    Dark = Color3.fromHex("#213448"),      -- StyledRectangle4
-    Text = Color3.fromHex("#EAE0CF"),      -- Text color
+    MainBG = Color3.fromHex("#EAE0CF"),
+    Accent = Color3.fromHex("#94B4C1"),
+    Dark = Color3.fromHex("#213448"),
+    Text = Color3.fromHex("#EAE0CF"),
     Black = Color3.fromHex("#000000")
 }
 
@@ -31,13 +31,13 @@ function Library:CreateWindow(Config)
     local LText = Instance.new("TextLabel")
     LText.Size = UDim2.new(1, 0, 1, 0)
     LText.Text = "KIRBY GUI LOADING..."
-    LText.Font = Enum.Font.GothamBold
+    LText.Font = Enum.Font.GothamBold -- Fixed font
     LText.TextSize = 20
     LText.TextColor3 = Theme.Dark
     LText.BackgroundTransparency = 1
     LText.Parent = LMain
     
-    task.wait(2) -- Simulate loading
+    task.wait(2)
     LoadingGui:Destroy()
 
     -- 2. MAIN INTERFACE
@@ -66,7 +66,7 @@ function Library:CreateWindow(Config)
     Title.Size = UDim2.new(1, -50, 1, 0)
     Title.Position = UDim2.new(0, 10, 0, 0)
     Title.TextColor3 = Theme.Text
-    Title.Font = Enum.Font.Inter
+    Title.Font = Enum.Font.Gotham -- Fixed font
     Title.TextSize = 18
     Title.BackgroundTransparency = 1
     Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -79,11 +79,11 @@ function Library:CreateWindow(Config)
     ExitBtn.BackgroundColor3 = Theme.Dark
     ExitBtn.Text = "X"
     ExitBtn.TextColor3 = Theme.Text
-    ExitBtn.Font = Enum.Font.GothamBold
+    ExitBtn.Font = Enum.Font.GothamBold -- Fixed font
     ExitBtn.Parent = TopBar
     ExitBtn.MouseButton1Click:Connect(function() MainGui:Destroy() end)
 
-    -- Sidebar (The Sidebar from your Rectangle3)
+    -- Sidebar
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Size = UDim2.new(0, 90, 1, -45)
     Sidebar.Position = UDim2.new(0, 0, 0, 45)
@@ -98,7 +98,7 @@ function Library:CreateWindow(Config)
     SideLayout.Padding = UDim.new(0, 2)
     SideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-    -- Main Content Area (Rectangle 6)
+    -- Container
     local Container = Instance.new("ScrollingFrame")
     Container.Size = UDim2.new(1, -100, 1, -55)
     Container.Position = UDim2.new(0, 95, 0, 50)
@@ -113,7 +113,7 @@ function Library:CreateWindow(Config)
     ContainerLayout.Padding = UDim.new(0, 5)
     ContainerLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-    -- Simple Dragging
+    -- Dragging
     local dragging, dragInput, dragStart, startPos
     TopBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -132,7 +132,6 @@ function Library:CreateWindow(Config)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
     end)
 
-    -- TAB AND BUTTON CREATION
     local WindowMethods = {}
 
     function WindowMethods:CreateTab(TabName)
@@ -141,7 +140,7 @@ function Library:CreateWindow(Config)
         TabBtn.BackgroundColor3 = Theme.Dark
         TabBtn.Text = TabName
         TabBtn.TextColor3 = Theme.Text
-        TabBtn.Font = Enum.Font.Inter
+        TabBtn.Font = Enum.Font.Gotham -- Fixed font
         TabBtn.Parent = Sidebar
 
         local TabMethods = {}
@@ -152,12 +151,11 @@ function Library:CreateWindow(Config)
             NewBtn.BackgroundColor3 = Theme.Dark
             NewBtn.Text = BtnName
             NewBtn.TextColor3 = Theme.Text
-            NewBtn.Font = Enum.Font.Inter
+            NewBtn.Font = Enum.Font.Gotham -- Fixed font
             NewBtn.Parent = Container
             
             NewBtn.MouseButton1Click:Connect(function()
                 Callback()
-                -- Button Click Effect
                 NewBtn.BackgroundColor3 = Color3.new(1,1,1)
                 task.wait(0.1)
                 NewBtn.BackgroundColor3 = Theme.Dark
