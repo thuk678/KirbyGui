@@ -67,8 +67,9 @@ function Library:CreateWindow(cfg)
     Content.Size = UDim2.new(1, -170, 1, -105); Content.Position = UDim2.new(0, 160, 0, 95)
     table.insert(self.Registry.SecBG, Content); ApplyStyle(Content, 8)
 
-    local Tabs = {}
-    function Tabs:CreateTab(tName)
+    local WindowActions = {}
+
+    function WindowActions:CreateTab(tName)
         local Page = Instance.new("ScrollingFrame", Content)
         Page.Size = UDim2.new(1, 0, 1, 0); Page.BackgroundTransparency = 1; Page.Visible = false; Page.ScrollBarThickness = 0
         local PageLayout = Instance.new("UIListLayout", Page); PageLayout.Padding = UDim.new(0, 10); PageLayout.HorizontalAlignment = "Center"
@@ -85,7 +86,6 @@ function Library:CreateWindow(cfg)
 
         local Elements = {}
 
-        -- BUTTON
         function Elements:CreateButton(bCfg)
             local b = Instance.new("TextButton", Page)
             b.Size = UDim2.new(0.9, 0, 0, 40); b.Text = bCfg.Name
@@ -93,7 +93,6 @@ function Library:CreateWindow(cfg)
             b.MouseButton1Click:Connect(bCfg.Callback)
         end
 
-        -- TOGGLE
         function Elements:CreateToggle(tCfg)
             local toggled = tCfg.CurrentValue or false
             local tFrame = Instance.new("TextButton", Page)
@@ -116,35 +115,26 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- SLIDER
         function Elements:CreateSlider(sCfg)
             local sFrame = Instance.new("Frame", Page)
             sFrame.Size = UDim2.new(0.9, 0, 0, 55); table.insert(Library.Registry.MainBG, sFrame); ApplyStyle(sFrame, 6)
-
             local title = Instance.new("TextLabel", sFrame)
             title.Size = UDim2.new(1, -20, 0, 25); title.Position = UDim2.new(0, 10, 0, 5); title.BackgroundTransparency = 1
             title.Text = sCfg.Name; title.TextXAlignment = "Left"; PrepareText(title, 16, true); table.insert(Library.Registry.Text, title)
-
             local valLabel = Instance.new("TextLabel", sFrame)
             valLabel.Size = UDim2.new(0, 50, 0, 25); valLabel.Position = UDim2.new(1, -60, 0, 5); valLabel.BackgroundTransparency = 1
             valLabel.Text = tostring(sCfg.CurrentValue); PrepareText(valLabel, 16, true); table.insert(Library.Registry.Accent, valLabel)
-
             local barBg = Instance.new("Frame", sFrame)
             barBg.Size = UDim2.new(1, -20, 0, 8); barBg.Position = UDim2.new(0, 10, 1, -15)
             table.insert(Library.Registry.SecBG, barBg); ApplyStyle(barBg, 4)
-
             local fill = Instance.new("Frame", barBg)
             fill.Size = UDim2.new((sCfg.CurrentValue - sCfg.Range[1]) / (sCfg.Range[2] - sCfg.Range[1]), 0, 1, 0)
             table.insert(Library.Registry.Accent, fill); ApplyStyle(fill, 4)
-
             local function update(input)
                 local pos = math.clamp((input.Position.X - barBg.AbsolutePosition.X) / barBg.AbsoluteSize.X, 0, 1)
                 local val = math.floor(sCfg.Range[1] + (sCfg.Range[2] - sCfg.Range[1]) * pos)
-                fill.Size = UDim2.new(pos, 0, 1, 0)
-                valLabel.Text = tostring(val)
-                sCfg.Callback(val)
+                fill.Size = UDim2.new(pos, 0, 1, 0); valLabel.Text = tostring(val); sCfg.Callback(val)
             end
-
             barBg.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     local move; move = UserInputService.InputChanged:Connect(function(input)
@@ -158,32 +148,23 @@ function Library:CreateWindow(cfg)
             end)
         end
 
-        -- DROPDOWN
         function Elements:CreateDropdown(dCfg)
             local expanded = false
             local dFrame = Instance.new("TextButton", Page)
-            dFrame.Size = UDim2.new(0.9, 0, 0, 40); dFrame.Text = dCfg.Name..": "..dCfg.CurrentValue; table.insert(Library.Registry.MainBG, dFrame)
-            table.insert(Library.Registry.Text, dFrame); ApplyStyle(dFrame, 6); PrepareText(dFrame, 16, true)
-
+            dFrame.Size = UDim2.new(0.9, 0, 0, 40); dFrame.Text = dCfg.Name..": "..dCfg.CurrentValue
+            table.insert(Library.Registry.MainBG, dFrame); table.insert(Library.Registry.Text, dFrame); ApplyStyle(dFrame, 6); PrepareText(dFrame, 16, true)
             local container = Instance.new("Frame", Page)
-            container.Size = UDim2.new(0.9, 0, 0, 0); container.Visible = false; table.insert(Library.Registry.SecBG, container)
-            ApplyStyle(container, 6); local list = Instance.new("UIListLayout", container); list.Padding = UDim.new(0, 5)
-
+            container.Size = UDim2.new(0.9, 0, 0, 0); container.Visible = false; table.insert(Library.Registry.SecBG, container); ApplyStyle(container, 6)
+            local list = Instance.new("UIListLayout", container); list.Padding = UDim.new(0, 5)
             for _, opt in pairs(dCfg.Options) do
                 local oBtn = Instance.new("TextButton", container)
-                oBtn.Size = UDim2.new(1, 0, 0, 30); oBtn.Text = opt; oBtn.BackgroundTransparency = 1
-                PrepareText(oBtn, 14, false); table.insert(Library.Registry.Text, oBtn)
+                oBtn.Size = UDim2.new(1, 0, 0, 30); oBtn.Text = opt; oBtn.BackgroundTransparency = 1; PrepareText(oBtn, 14, false); table.insert(Library.Registry.Text, oBtn)
                 oBtn.MouseButton1Click:Connect(function()
-                    dFrame.Text = dCfg.Name..": "..opt
-                    expanded = false; container.Visible = false; container.Size = UDim2.new(0.9, 0, 0, 0)
-                    dCfg.Callback(opt)
+                    dFrame.Text = dCfg.Name..": "..opt; expanded = false; container.Visible = false; container.Size = UDim2.new(0.9, 0, 0, 0); dCfg.Callback(opt)
                 end)
             end
-
             dFrame.MouseButton1Click:Connect(function()
-                expanded = not expanded
-                container.Visible = expanded
-                container.Size = expanded and UDim2.new(0.9, 0, 0, #dCfg.Options * 35) or UDim2.new(0.9, 0, 0, 0)
+                expanded = not expanded; container.Visible = expanded; container.Size = expanded and UDim2.new(0.9, 0, 0, #dCfg.Options * 35) or UDim2.new(0.9, 0, 0, 0)
             end)
         end
 
@@ -202,7 +183,9 @@ function Library:CreateWindow(cfg)
         if #Content:GetChildren() == 1 then Page.Visible = true end
         return Elements
     end
-    Library:UpdateUI(); return Tabs
+
+    Library:UpdateUI()
+    return WindowActions
 end
 
 return Library
