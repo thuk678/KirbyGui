@@ -28,7 +28,8 @@ function Library:UpdateUI()
 end
 
 local function ApplyStyle(obj, radius)
-    Instance.new("UICorner", obj).CornerRadius = UDim.new(0, radius)
+    local c = Instance.new("UICorner", obj)
+    c.CornerRadius = UDim.new(0, radius)
     local s = Instance.new("UIStroke", obj)
     s.Thickness = 2; s.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; s.Color = Color3.new(0,0,0)
 end
@@ -36,7 +37,8 @@ end
 local function PrepareText(obj, size, isBold)
     obj.Font = isBold and Enum.Font.GothamBold or Enum.Font.GothamMedium
     obj.TextScaled = true; obj.RichText = true
-    Instance.new("UITextSizeConstraint", obj).MaxTextSize = size
+    local qc = Instance.new("UITextSizeConstraint", obj)
+    qc.MaxTextSize = size
     local ts = Instance.new("UIStroke", obj)
     ts.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
     ts.Thickness = 1.5; ts.Color = Color3.new(0,0,0); ts.Transparency = 0.2
@@ -59,9 +61,9 @@ local function MakeDraggable(handle, main)
 end
 
 function Library:CreateWindow(cfg)
-    local titleText = cfg.Name or "Library"
+    local name = cfg.Name or "KirbyGui"
     local ScreenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
-    ScreenGui.Name = "CustomLib"
+    ScreenGui.Name = "KirbyLib"
     ScreenGui.ResetOnSpawn = false
 
     local MainFrame = Instance.new("Frame", ScreenGui)
@@ -76,7 +78,7 @@ function Library:CreateWindow(cfg)
 
     local Title = Instance.new("TextLabel", Header)
     Title.Size = UDim2.new(1, -100, 1, 0); Title.Position = UDim2.new(0, 20, 0, 0); Title.BackgroundTransparency = 1
-    Title.Text = titleText; Title.TextXAlignment = "Left"
+    Title.Text = name; Title.TextXAlignment = "Left"
     PrepareText(Title, 32, true); table.insert(self.Registry.Accent, Title)
 
     local Exit = Instance.new("TextButton", Header)
@@ -96,9 +98,9 @@ function Library:CreateWindow(cfg)
     SidebarLayout.Padding = UDim.new(0, 8); SidebarLayout.HorizontalAlignment = "Center"
     Instance.new("UIPadding", Sidebar).PaddingTop = UDim.new(0, 15)
 
-    local WindowFunctions = {}
+    local WindowActions = {}
 
-    function WindowFunctions:CreateTab(tabName)
+    function WindowActions:CreateTab(tName)
         local Page = Instance.new("ScrollingFrame", Content)
         Page.Size = UDim2.new(1, 0, 1, 0); Page.BackgroundTransparency = 1; Page.Visible = false; Page.ScrollBarThickness = 0
         local PageLayout = Instance.new("UIListLayout", Page); PageLayout.Padding = UDim.new(0, 10); PageLayout.HorizontalAlignment = "Center"
@@ -106,7 +108,7 @@ function Library:CreateWindow(cfg)
         PageLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() Page.CanvasSize = UDim2.new(0,0,0, PageLayout.AbsoluteContentSize.Y + 30) end)
 
         local TabBtn = Instance.new("TextButton", Sidebar)
-        TabBtn.Size = UDim2.new(0, 115, 0, 40); TabBtn.Text = tabName
+        TabBtn.Size = UDim2.new(0, 115, 0, 40); TabBtn.Text = tName
         PrepareText(TabBtn, 18, true); table.insert(Library.Registry.MainBG, TabBtn); table.insert(Library.Registry.Accent, TabBtn); ApplyStyle(TabBtn, 6)
         
         TabBtn.MouseButton1Click:Connect(function()
@@ -114,27 +116,25 @@ function Library:CreateWindow(cfg)
             Page.Visible = true
         end)
 
-        local TabFunctions = {}
+        local TabActions = {}
 
-        function TabFunctions:CreateButton(btnCfg)
+        function TabActions:CreateButton(bCfg)
             local b = Instance.new("TextButton", Page)
-            b.Size = UDim2.new(0.9, 0, 0, 45); b.Text = btnCfg.Name or "Button"
+            b.Size = UDim2.new(0.9, 0, 0, 45); b.Text = bCfg.Name or "Button"
             PrepareText(b, 20, true); table.insert(Library.Registry.MainBG, b); table.insert(Library.Registry.Text, b)
             ApplyStyle(b, 6)
-            b.MouseButton1Click:Connect(function() btnCfg.Callback() end)
+            b.MouseButton1Click:Connect(function() bCfg.Callback() end)
         end
-        
-        -- Add Theme Button automatically to a specific tab if needed, 
-        -- but here we return functions to let the user add them.
-        function TabFunctions:CreateThemeButtons()
-            for name, colors in pairs(Presets) do
+
+        function TabActions:CreateThemeSection()
+            for pName, pCols in pairs(Presets) do
                 self:CreateButton({
-                    Name = "Theme: "..name,
+                    Name = "Theme: "..pName,
                     Callback = function()
-                        Library.CurrentTheme.MainBG = Color3.fromHex(colors.MainBG)
-                        Library.CurrentTheme.SecBG = Color3.fromHex(colors.SecBG)
-                        Library.CurrentTheme.Accent = Color3.fromHex(colors.Accent)
-                        Library.CurrentTheme.Text = Color3.fromHex(colors.Text)
+                        Library.CurrentTheme.MainBG = Color3.fromHex(pCols.MainBG)
+                        Library.CurrentTheme.SecBG = Color3.fromHex(pCols.SecBG)
+                        Library.CurrentTheme.Accent = Color3.fromHex(pCols.Accent)
+                        Library.CurrentTheme.Text = Color3.fromHex(pCols.Text)
                         Library:UpdateUI()
                     end
                 })
@@ -142,11 +142,11 @@ function Library:CreateWindow(cfg)
         end
 
         if #Content:GetChildren() == 1 then Page.Visible = true end
-        return TabFunctions
+        return TabActions
     end
 
     Library:UpdateUI()
-    return WindowFunctions
+    return WindowActions
 end
 
 return Library
